@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Photo Booth Music</title>
+  </head>
+  <body>
+    <div id="app">
+      <div id="loading">
+        <div class="loading-content">
+          <div class="spinner"></div>
+          <p>Loading hand tracking model...</p>
+        </div>
+      </div>
+      <div id="toolbar">
+        <div id="mode-selector"></div>
+        <div id="mode-controls"></div>
+      </div>
+      <div id="viewport">
+        <video id="webcam" autoplay playsinline muted></video>
+        <canvas id="overlay"></canvas>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
