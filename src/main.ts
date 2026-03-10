@@ -9,6 +9,7 @@ import { FormantMode } from './modes/FormantMode.ts';
 import { ModeSelector } from './ui/ModeSelector.ts';
 import type { ModeName } from './ui/ModeSelector.ts';
 import { ThereminControls } from './ui/ThereminControls.ts';
+import { WelcomePopup } from './ui/WelcomePopup.ts';
 import type { TrackingResult } from './tracking/HandTracker.ts';
 
 async function main() {
@@ -119,6 +120,13 @@ async function main() {
   loadingEl.querySelector('p')!.textContent = 'Loading hand tracking model...';
   await tracker.init();
   loadingEl.classList.add('hidden');
+
+  // 7.5 Show welcome popup on first visit
+  if (WelcomePopup.shouldShow()) {
+    new WelcomePopup(() => {
+      audioEngine.resume();
+    });
+  }
 
   // 8. Resume audio on any click
   document.addEventListener('click', () => audioEngine.resume(), { once: true });
