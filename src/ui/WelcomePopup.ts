@@ -15,7 +15,7 @@ export class WelcomePopup {
     this.el.innerHTML = `
       <div class="welcome-backdrop"></div>
       <div class="welcome-card">
-        <div class="welcome-badge">BETA</div>
+        <div class="welcome-badge">EXPERIMENTAL</div>
         <h1 class="welcome-title">Welcome to Air Composer!</h1>
         <p class="welcome-subtitle">Play music with your hands in the air.</p>
 
