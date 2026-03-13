@@ -16,6 +16,18 @@
     <title>Air Composer</title>
   </head>
   <body>
+    <div id="mobile-notice" style="display:none; position:fixed; inset:0; z-index:9999; background:#0f0f0f; color:#e0e0e0; font-family:system-ui,sans-serif; padding:2rem; text-align:center; flex-direction:column; justify-content:center; align-items:center; gap:1.5rem;">
+      <div style="font-size:3rem;">🎵</div>
+      <h1 style="font-size:1.4rem; font-weight:700; margin:0;">Air Composer is a Desktop Experience</h1>
+      <p style="font-size:0.95rem; color:#999; max-width:320px; line-height:1.5; margin:0 auto;">This app uses your webcam and hand tracking to let you play music by waving your hands. It needs a desktop browser with a camera.</p>
+      <a href="https://pyon.dev" style="color:#f97316; font-size:0.9rem; text-decoration:none;">← Back to pyon.dev</a>
+    </div>
+    <script>
+      if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 768) {
+        document.getElementById('mobile-notice').style.display = 'flex';
+        document.getElementById('app').style.display = 'none';
+      }
+    </script>
     <div id="app">
       <div id="loading">
         <div class="loading-content">
