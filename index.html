@@ -19,13 +19,93 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <title>Air Composer</title>
+    <style>
+      .mobile-gate {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #0f0f0f;
+        color: #e0e0e0;
+        font-family: 'Outfit', system-ui, sans-serif;
+        padding: 2rem;
+        text-align: center;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+        overflow-y: auto;
+      }
+      .mobile-gate h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin: 0;
+        color: #a78bfa;
+      }
+      .mobile-gate .tagline {
+        font-size: 1rem;
+        color: #c4b5fd;
+        margin: 0;
+      }
+      .mobile-gate .preview-card {
+        width: 100%;
+        max-width: 320px;
+      }
+      .mobile-gate .preview-card img {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 12px;
+        border: 1px solid rgba(167, 139, 250, 0.3);
+        display: block;
+      }
+      .mobile-gate .explain {
+        font-size: 0.9rem;
+        color: #999;
+        max-width: 320px;
+        line-height: 1.6;
+        margin: 0 auto;
+      }
+      .mobile-gate button {
+        width: 100%;
+        max-width: 320px;
+        min-height: 52px;
+        background: #a78bfa;
+        color: #0f0f0f;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 0 1.5rem;
+        font-family: inherit;
+        transition: background 0.2s;
+      }
+      .mobile-gate button:active {
+        background: #c4b5fd;
+      }
+      .mobile-gate .back-link {
+        color: #a78bfa;
+        font-size: 0.9rem;
+        text-decoration: none;
+      }
+      @media (max-width: 768px) {
+        .mobile-gate { display: flex; }
+        #app { display: none !important; }
+      }
+    </style>
   </head>
   <body>
-    <div id="mobile-notice" style="display:none; position:fixed; inset:0; z-index:9999; background:#0f0f0f; color:#e0e0e0; font-family:system-ui,sans-serif; padding:2rem; text-align:center; flex-direction:column; justify-content:center; align-items:center; gap:1.5rem;">
-      <div style="font-size:3rem;">🎵</div>
-      <h1 style="font-size:1.4rem; font-weight:700; margin:0;">Air Composer is a Desktop Experience</h1>
-      <p style="font-size:0.95rem; color:#999; max-width:320px; line-height:1.5; margin:0 auto;">This app uses your webcam and hand tracking to let you play music by waving your hands. It needs a desktop browser with a camera.</p>
-      <a href="https://pyon.dev" style="color:#f97316; font-size:0.9rem; text-decoration:none;">← Back to pyon.dev</a>
+    <div class="mobile-gate" id="mobile-notice">
+      <h1>Air Composer</h1>
+      <p class="tagline">Play music with your hands</p>
+      <div class="preview-card">
+        <img src="/og.png" alt="Air Composer preview" />
+      </div>
+      <p class="explain">Air Composer uses your webcam to track hand movements and turn them into music. It needs a desktop browser with a camera.</p>
+      <button onclick="navigator.clipboard.writeText('https://air-composer.michaelpyon.com').then(() => this.textContent = 'Link copied!')">
+        📋 Copy Link for Desktop
+      </button>
+      <a href="https://pyon.dev" class="back-link">← Back to pyon.dev</a>
     </div>
     <script>
       if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 768) {
