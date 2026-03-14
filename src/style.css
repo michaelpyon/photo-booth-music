@@ -58,6 +58,121 @@ body {
   to { transform: rotate(360deg); }
 }
 
+/* Camera denied splash */
+.camera-denied {
+  text-align: center;
+  max-width: 420px;
+  padding: 2rem;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.denied-icon {
+  font-size: 3rem;
+  margin-bottom: 0.75rem;
+}
+
+.denied-title {
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #a78bfa;
+  margin: 0 0 0.25rem;
+}
+
+.denied-tagline {
+  font-size: 1rem;
+  color: #c4b5fd;
+  margin: 0 0 1.25rem;
+}
+
+.denied-divider {
+  width: 48px;
+  height: 2px;
+  background: #a78bfa;
+  margin: 0 auto 1.25rem;
+  border-radius: 1px;
+}
+
+.denied-explain {
+  font-size: 0.9rem;
+  color: #aaa;
+  line-height: 1.6;
+  margin: 0 0 1.5rem;
+}
+
+.denied-steps {
+  text-align: left;
+  background: rgba(167, 139, 250, 0.08);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.denied-steps-heading {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #e0e0e0;
+  margin: 0 0 0.5rem;
+}
+
+.denied-steps ol {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #bbb;
+  font-size: 0.85rem;
+  line-height: 1.8;
+}
+
+.denied-reload {
+  display: inline-block;
+  background: #a78bfa;
+  color: #0f0f0f;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+  transition: background 0.15s;
+}
+
+.denied-reload:hover {
+  background: #c4b5fd;
+}
+
+.denied-about {
+  text-align: left;
+  margin-bottom: 1.25rem;
+}
+
+.denied-about-heading {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.4rem;
+}
+
+.denied-about p:last-child {
+  font-size: 0.85rem;
+  color: #888;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.denied-back {
+  color: #a78bfa;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.denied-back:hover {
+  text-decoration: underline;
+}
+
 /* Toolbar */
 #toolbar {
   position: fixed;

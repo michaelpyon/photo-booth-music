@@ -24,9 +24,29 @@ async function main() {
   try {
     await camera.start();
   } catch (e) {
-    loadingEl.querySelector('p')!.textContent =
-      'Camera access denied. Please allow camera access and reload.';
-    loadingEl.querySelector('.spinner')!.remove();
+    loadingEl.innerHTML = `
+      <div class="camera-denied">
+        <div class="denied-icon">🎵</div>
+        <h1 class="denied-title">Air Composer</h1>
+        <p class="denied-tagline">Play music with your hands</p>
+        <div class="denied-divider"></div>
+        <p class="denied-explain">Air Composer uses your webcam to track hand movements and turn them into music.</p>
+        <div class="denied-steps">
+          <p class="denied-steps-heading">To get started:</p>
+          <ol>
+            <li>Click the camera icon in your browser's address bar</li>
+            <li>Select "Allow"</li>
+            <li>Refresh this page</li>
+          </ol>
+        </div>
+        <button class="denied-reload" onclick="location.reload()">Refresh Page</button>
+        <div class="denied-about">
+          <p class="denied-about-heading">What is Air Composer?</p>
+          <p>Wave your hands in front of your webcam to play a synthesizer. Your left hand controls pitch, your right hand controls volume and effects. No downloads, no plugins.</p>
+        </div>
+        <a class="denied-back" href="https://pyon.dev">&larr; Back to pyon.dev</a>
+      </div>
+    `;
     return;
   }
 
