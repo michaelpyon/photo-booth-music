@@ -12,6 +12,50 @@ import { ThereminControls } from './ui/ThereminControls.ts';
 import { WelcomePopup } from './ui/WelcomePopup.ts';
 import type { TrackingResult } from './tracking/HandTracker.ts';
 
+async function startCamera(
+  camera: CameraManager,
+  loadingEl: HTMLElement,
+): Promise<boolean> {
+  // Reset to loading state
+  const content = loadingEl.querySelector('.loading-content')!;
+  content.innerHTML =
+    '<div class="spinner"></div><p>Requesting camera access...</p>';
+  loadingEl.classList.remove('hidden');
+
+  try {
+    await camera.start();
+    return true;
+  } catch (e) {
+    const isDenied =
+      e instanceof DOMException &&
+      (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError');
+
+    content.innerHTML = `
+      <div class="camera-denied">
+        <div class="camera-denied-icon">&#128247;</div>
+        <h2>Camera Access Required</h2>
+        <p>${
+          isDenied
+            ? 'Camera permission was denied. Air Composer needs your camera to track hand movements and turn them into music.'
+            : 'Could not access the camera. Please make sure a camera is connected and not in use by another application.'
+        }</p>
+        <button class="btn camera-denied-retry" type="button">Try Again</button>
+        ${isDenied ? '<p class="camera-denied-hint">If the browser does not prompt you again, click the camera icon in your address bar to reset permissions, then try again.</p>' : ''}
+      </div>
+    `;
+
+    return new Promise<boolean>((resolve) => {
+      content.querySelector('.camera-denied-retry')!.addEventListener(
+        'click',
+        () => {
+          resolve(startCamera(camera, loadingEl));
+        },
+        { once: true },
+      );
+    });
+  }
+}
+
 async function main() {
   const video = document.getElementById('webcam') as HTMLVideoElement;
   const canvas = document.getElementById('overlay') as HTMLCanvasElement;
@@ -19,7 +63,7 @@ async function main() {
   const modeSelectorEl = document.getElementById('mode-selector')!;
   const modeControlsEl = document.getElementById('mode-controls')!;
 
-  // 1. Start camera
+  // 1. Start camera (with retry support)
   const camera = new CameraManager(video);
   try {
     await camera.start();
@@ -137,7 +181,9 @@ async function main() {
     activeMode.onTrackingResult(result, renderer);
   });
 
-  loadingEl.querySelector('p')!.textContent = 'Loading hand tracking model...';
+  const loadingContent = loadingEl.querySelector('.loading-content')!;
+  loadingContent.innerHTML =
+    '<div class="spinner"></div><p>Loading hand tracking model...</p>';
   await tracker.init();
   loadingEl.classList.add('hidden');
 
