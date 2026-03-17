@@ -34,6 +34,9 @@ function getClosestVowel(f1: number, f2: number): string {
 const BRIGHTNESS_MIN = 300;
 const BRIGHTNESS_MAX = 8000;
 
+// Consistent canvas font using the loaded Google Font
+const MONO_FONT = '"JetBrains Mono", monospace';
+
 // ── Main overlay function ───────────────────────────────────────────
 export function drawFormantOverlay(
   renderer: CanvasRenderer,
@@ -65,32 +68,32 @@ export function drawFormantOverlay(
       // ── Vowel hand labels ─────────────────────────────────────
       // Closest vowel sound (large, prominent)
       const vowelName = getClosestVowel(hand.f1, hand.f2);
-      ctx.font = 'bold 22px "SF Mono", "Fira Code", monospace';
+      ctx.font = `bold 22px ${MONO_FONT}`;
       ctx.fillStyle = hand.color;
       ctx.textAlign = 'left';
       ctx.fillText(vowelName, hand.x + 20, hand.y - 22);
 
       // F1/F2 values
-      ctx.font = '11px "SF Mono", "Fira Code", monospace';
+      ctx.font = `11px ${MONO_FONT}`;
       ctx.fillStyle = 'rgba(255, 51, 102, 0.7)';
       ctx.fillText(`F1: ${Math.round(hand.f1)} Hz`, hand.x + 20, hand.y - 4);
       ctx.fillText(`F2: ${Math.round(hand.f2)} Hz`, hand.x + 20, hand.y + 10);
 
       // "VOWEL" tag
-      ctx.font = 'bold 9px "SF Mono", "Fira Code", monospace';
+      ctx.font = `bold 9px ${MONO_FONT}`;
       ctx.fillStyle = 'rgba(255, 51, 102, 0.4)';
       ctx.fillText('VOWEL', hand.x + 20, hand.y + 24);
 
     } else {
       // ── Pitch hand labels ─────────────────────────────────────
       // Note name (large, prominent)
-      ctx.font = 'bold 22px "SF Mono", "Fira Code", monospace';
+      ctx.font = `bold 22px ${MONO_FONT}`;
       ctx.fillStyle = hand.color;
       ctx.textAlign = 'left';
       ctx.fillText(hand.noteName, hand.x + 20, hand.y - 22);
 
       // Pitch in Hz
-      ctx.font = '11px "SF Mono", "Fira Code", monospace';
+      ctx.font = `11px ${MONO_FONT}`;
       ctx.fillStyle = 'rgba(0, 255, 204, 0.7)';
       ctx.fillText(`${Math.round(hand.pitch)} Hz`, hand.x + 20, hand.y - 4);
 
@@ -107,7 +110,7 @@ export function drawFormantOverlay(
       ctx.fillRect(barX, barY, barWidth * Math.max(0, Math.min(1, brightnessNorm)), barHeight);
 
       // "PITCH" tag
-      ctx.font = 'bold 9px "SF Mono", "Fira Code", monospace';
+      ctx.font = `bold 9px ${MONO_FONT}`;
       ctx.fillStyle = 'rgba(0, 255, 204, 0.4)';
       ctx.fillText('PITCH', hand.x + 20, hand.y + 26);
     }
@@ -119,8 +122,8 @@ export function drawFormantOverlay(
   }
 
   // ── Bottom hint ─────────────────────────────────────────────────
-  ctx.font = '11px "SF Mono", "Fira Code", monospace';
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+  ctx.font = `11px ${MONO_FONT}`;
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
   ctx.textAlign = 'center';
   ctx.fillText(
     'Hand 1: vowel shape  \u2022  Hand 2: pitch + brightness  \u2022  [H] guide',
@@ -149,12 +152,12 @@ function drawVowelMap(
   const x = w - size - 20;
   const y = h - size - 45;
 
-  // Background
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+  // Background — increased opacity for camera-behind readability
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
   ctx.fillRect(x - 10, y - 25, size + 20, size + 40);
 
   // Title
-  ctx.font = 'bold 10px "SF Mono", "Fira Code", monospace';
+  ctx.font = `bold 10px ${MONO_FONT}`;
   ctx.fillStyle = 'rgba(255, 51, 102, 0.8)';
   ctx.textAlign = 'center';
   ctx.fillText('HAND 1: VOWELS', x + size / 2, y - 10);
@@ -188,7 +191,7 @@ function drawVowelMap(
   ctx.stroke();
 
   // Draw vowel labels
-  ctx.font = 'bold 11px "SF Mono", "Fira Code", monospace';
+  ctx.font = `bold 11px ${MONO_FONT}`;
   ctx.textAlign = 'center';
   for (const vp of vowelPositions) {
     const px = x + vp.px * size;
@@ -197,9 +200,9 @@ function drawVowelMap(
     ctx.fillText(vp.label, px, py);
   }
 
-  // Axis hints
-  ctx.font = '7px "SF Mono", "Fira Code", monospace';
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+  // Axis hints — improved contrast
+  ctx.font = `7px ${MONO_FONT}`;
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
   ctx.textAlign = 'left';
   ctx.fillText('\u2190 back', x, y + size + 12);
   ctx.textAlign = 'right';
@@ -222,12 +225,12 @@ function drawPitchReference(
   const prWidth = 200;
   const prHeight = 24;
 
-  // Background
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+  // Background — increased opacity for camera-behind readability
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
   ctx.fillRect(prX - 5, prY - 22, prWidth + 10, prHeight + 50);
 
   // Title
-  ctx.font = 'bold 10px "SF Mono", "Fira Code", monospace';
+  ctx.font = `bold 10px ${MONO_FONT}`;
   ctx.fillStyle = 'rgba(0, 255, 204, 0.8)';
   ctx.textAlign = 'center';
   ctx.fillText('HAND 2: PITCH + EXPRESSION', prX + prWidth / 2, prY - 8);
@@ -247,7 +250,7 @@ function drawPitchReference(
     { label: 'C5', pos: 24 / 24 },
   ];
 
-  ctx.font = '8px "SF Mono", "Fira Code", monospace';
+  ctx.font = `8px ${MONO_FONT}`;
   ctx.textAlign = 'center';
   for (const nm of noteMarks) {
     const nx = prX + nm.pos * prWidth;
@@ -259,9 +262,9 @@ function drawPitchReference(
     ctx.fillText(nm.label, nx, prY + prHeight + 10);
   }
 
-  // Y-axis hint
-  ctx.font = '8px "SF Mono", "Fira Code", monospace';
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
+  // Y-axis hint — improved contrast
+  ctx.font = `8px ${MONO_FONT}`;
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
   ctx.textAlign = 'left';
   ctx.fillText('\u2191 bright  \u2193 dark  \u270b vibrato', prX, prY + prHeight + 22);
 }
@@ -275,19 +278,19 @@ function drawTryThisPanel(
   const tpY = 50;
   const tpWidth = 215;
 
-  // Background
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+  // Background — increased opacity for camera-behind readability
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
   ctx.fillRect(tpX - 5, tpY - 5, tpWidth + 10, 118);
 
   // Title
-  ctx.font = 'bold 11px "SF Mono", "Fira Code", monospace';
+  ctx.font = `bold 11px ${MONO_FONT}`;
   ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
   ctx.textAlign = 'left';
   ctx.fillText('TRY THIS:', tpX, tpY + 12);
 
   // Sound recipes
-  ctx.font = '9px "SF Mono", "Fira Code", monospace';
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+  ctx.font = `9px ${MONO_FONT}`;
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
 
   ctx.fillText('"YEAH" \u2014 H1: quick EE \u2192 EH (default!)', tpX, tpY + 30);
   ctx.fillText('"WAH"  \u2014 H1: sweep OO \u2192 AH', tpX, tpY + 44);
@@ -295,8 +298,8 @@ function drawTryThisPanel(
   ctx.fillText('"YOW"  \u2014 H1: sweep EE \u2192 AH', tpX, tpY + 72);
   ctx.fillText('"RIFF" \u2014 H2: slide pitch + H1 vowels', tpX, tpY + 86);
 
-  // Toggle hint
-  ctx.font = '8px "SF Mono", "Fira Code", monospace';
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+  // Toggle hint — improved contrast
+  ctx.font = `8px ${MONO_FONT}`;
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
   ctx.fillText('[H] hide guide  \u2022  \u270b spread fingers = vibrato', tpX, tpY + 105);
 }

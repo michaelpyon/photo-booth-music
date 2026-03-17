@@ -4,21 +4,23 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Air Composer — Play Music With Your Hands</title>
+    <meta name="description" content="Play a theremin and talk box with your hands using just a webcam. No installs. Runs entirely in the browser." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://air-composer.michaelpyon.com" />
     <meta property="og:title" content="Air Composer — Play Music With Your Hands" />
-    <meta property="og:description" content="Wave your hands in front of your webcam to play music. Hand tracking meets a synthesizer." />
+    <meta property="og:description" content="Play a theremin and talk box with your hands using just a webcam. No installs. Runs entirely in the browser." />
     <meta property="og:image" content="https://air-composer.michaelpyon.com/og.png" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Air Composer — Play Music With Your Hands" />
-    <meta name="twitter:description" content="Wave your hands in front of your webcam to play music. Hand tracking meets a synthesizer." />
+    <meta name="twitter:title" content="Air Composer" />
+    <meta name="twitter:description" content="Play a theremin and talk box with your hands using just a webcam. No installs." />
     <meta name="twitter:image" content="https://air-composer.michaelpyon.com/og.png" />
     <meta name="twitter:site" content="@michaelpyon" />
     <meta name="twitter:creator" content="@michaelpyon" />
+    <link rel="canonical" href="https://air-composer.michaelpyon.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <title>Air Composer</title>
     <style>
       .mobile-gate {
         display: none;
@@ -35,6 +37,9 @@
         align-items: center;
         gap: 1.5rem;
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        max-height: 100vh;
+        max-height: 100dvh;
       }
       .mobile-gate h1 {
         font-size: 1.8rem;
@@ -83,6 +88,10 @@
       .mobile-gate button:active {
         background: #c4b5fd;
       }
+      .mobile-gate button:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px #a78bfa, 0 0 0 4px rgba(167, 139, 250, 0.3);
+      }
       .mobile-gate .back-link {
         color: #a78bfa;
         font-size: 0.9rem;
@@ -108,7 +117,10 @@
       <a href="https://pyon.dev" class="back-link">← Back to pyon.dev</a>
     </div>
     <script>
-      if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 768) {
+      // Use both UA check and pointer capability for more robust detection
+      var isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ||
+        (window.matchMedia && window.matchMedia('(pointer: coarse)').matches && window.innerWidth < 768);
+      if (isMobile) {
         document.getElementById('mobile-notice').style.display = 'flex';
         document.getElementById('app').style.display = 'none';
       }
@@ -116,7 +128,7 @@
     <div id="app">
       <div id="loading">
         <div class="loading-content">
-          <div class="spinner"></div>
+          <div class="waveform-loader"><span></span><span></span><span></span><span></span><span></span></div>
           <p>Warming up your air instrument...</p>
         </div>
       </div>
