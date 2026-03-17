@@ -16,6 +16,9 @@ const Y_MODE_LABELS: Record<YAxisMode, string> = {
   octave: 'OCTAVE',
 };
 
+// Consistent canvas font using the loaded Google Font
+const MONO_FONT = '"JetBrains Mono", monospace';
+
 export function drawThereminOverlay(
   renderer: CanvasRenderer,
   handX: number | null,
@@ -35,13 +38,13 @@ export function drawThereminOverlay(
   const h = renderer.height;
 
   // Range indicator (bottom-left) — always visible
-  ctx.font = 'bold 13px "SF Mono", "Fira Code", monospace';
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+  ctx.font = `bold 13px ${MONO_FONT}`;
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
   ctx.textAlign = 'left';
   ctx.fillText(`Range: ${rangeLabel}`, 20, h - 40);
-  ctx.font = '11px "SF Mono", "Fira Code", monospace';
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
-  ctx.fillText('↑↓ arrows to shift', 20, h - 22);
+  ctx.font = `11px ${MONO_FONT}`;
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+  ctx.fillText('\u2191\u2193 arrows to shift', 20, h - 22);
 
   // Listening indicator + chord (top-right area, below toolbar)
   if (listening) {
@@ -53,13 +56,13 @@ export function drawThereminOverlay(
     ctx.fillStyle = `rgba(255, 50, 50, ${0.6 + pulse * 0.4})`;
     ctx.fill();
 
-    ctx.font = 'bold 12px "SF Mono", "Fira Code", monospace';
+    ctx.font = `bold 12px ${MONO_FONT}`;
     ctx.fillStyle = `rgba(255, 100, 100, ${0.7 + pulse * 0.3})`;
     ctx.textAlign = 'left';
     ctx.fillText('LISTENING', w - 122, 62);
 
     if (chordLabel) {
-      ctx.font = 'bold 16px "SF Mono", "Fira Code", monospace';
+      ctx.font = `bold 16px ${MONO_FONT}`;
       ctx.fillStyle = 'rgba(255, 200, 100, 0.9)';
       ctx.textAlign = 'right';
       ctx.fillText(`Chord: ${chordLabel}`, w - 20, 85);
@@ -96,30 +99,30 @@ export function drawThereminOverlay(
   // Note label near crosshair
   const noteName = frequencyToNoteName(freq);
   const freqStr = `${Math.round(freq)} Hz`;
-  ctx.font = 'bold 20px "SF Mono", "Fira Code", monospace';
+  ctx.font = `bold 20px ${MONO_FONT}`;
   ctx.fillStyle = '#0ff';
   ctx.textAlign = handX > w / 2 ? 'right' : 'left';
   const labelX = handX > w / 2 ? handX - 20 : handX + 20;
   ctx.fillText(noteName, labelX, handY - 35);
-  ctx.font = '13px "SF Mono", "Fira Code", monospace';
+  ctx.font = `13px ${MONO_FONT}`;
   ctx.fillStyle = 'rgba(0, 255, 255, 0.7)';
   ctx.fillText(freqStr, labelX, handY - 18);
 
   // Y-axis mode label + value (right side of horizontal line)
-  ctx.font = 'bold 14px "SF Mono", "Fira Code", monospace';
+  ctx.font = `bold 14px ${MONO_FONT}`;
   ctx.fillStyle = yColor;
   ctx.textAlign = 'right';
   ctx.fillText(`${Y_MODE_LABELS[yMode]}: ${yLabel}`, w - 20, handY - 10);
 
   // Scale/key badge (top-right, below toolbar)
   if (scaleSnap && scaleLabel) {
-    ctx.font = 'bold 14px "SF Mono", "Fira Code", monospace';
+    ctx.font = `bold 14px ${MONO_FONT}`;
     ctx.fillStyle = 'rgba(255, 255, 0, 0.8)';
     ctx.textAlign = 'right';
     ctx.fillText(`Key: ${scaleLabel}`, w - 20, 65);
 
     // SNAP indicator near crosshair
-    ctx.font = '11px "SF Mono", "Fira Code", monospace';
+    ctx.font = `11px ${MONO_FONT}`;
     ctx.fillStyle = 'rgba(255, 255, 0, 0.7)';
     ctx.textAlign = handX > w / 2 ? 'right' : 'left';
     ctx.fillText('SNAP', labelX, handY + 18);

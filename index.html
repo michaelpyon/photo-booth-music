@@ -37,6 +37,9 @@
         align-items: center;
         gap: 1.5rem;
         overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        max-height: 100vh;
+        max-height: 100dvh;
       }
       .mobile-gate h1 {
         font-size: 1.8rem;
@@ -85,6 +88,10 @@
       .mobile-gate button:active {
         background: #c4b5fd;
       }
+      .mobile-gate button:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px #a78bfa, 0 0 0 4px rgba(167, 139, 250, 0.3);
+      }
       .mobile-gate .back-link {
         color: #a78bfa;
         font-size: 0.9rem;
@@ -110,7 +117,10 @@
       <a href="https://pyon.dev" class="back-link">← Back to pyon.dev</a>
     </div>
     <script>
-      if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 768) {
+      // Use both UA check and pointer capability for more robust detection
+      var isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ||
+        (window.matchMedia && window.matchMedia('(pointer: coarse)').matches && window.innerWidth < 768);
+      if (isMobile) {
         document.getElementById('mobile-notice').style.display = 'flex';
         document.getElementById('app').style.display = 'none';
       }
@@ -118,7 +128,7 @@
     <div id="app">
       <div id="loading">
         <div class="loading-content">
-          <div class="spinner"></div>
+          <div class="waveform-loader"><span></span><span></span><span></span><span></span><span></span></div>
           <p>Warming up your air instrument...</p>
         </div>
       </div>

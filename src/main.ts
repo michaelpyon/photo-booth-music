@@ -19,7 +19,7 @@ async function startCamera(
   // Reset to loading state
   const content = loadingEl.querySelector('.loading-content')!;
   content.innerHTML =
-    '<div class="spinner"></div><p>Requesting camera access...</p>';
+    '<div class="waveform-loader"><span></span><span></span><span></span><span></span><span></span></div><p>Requesting camera access...</p>';
   loadingEl.classList.remove('hidden');
 
   try {
@@ -60,6 +60,7 @@ async function main() {
   const video = document.getElementById('webcam') as HTMLVideoElement;
   const canvas = document.getElementById('overlay') as HTMLCanvasElement;
   const loadingEl = document.getElementById('loading')!;
+  const toolbar = document.getElementById('toolbar')!;
   const modeSelectorEl = document.getElementById('mode-selector')!;
   const modeControlsEl = document.getElementById('mode-controls')!;
 
@@ -183,9 +184,19 @@ async function main() {
 
   const loadingContent = loadingEl.querySelector('.loading-content')!;
   loadingContent.innerHTML =
-    '<div class="spinner"></div><p>Loading hand tracking model...</p>';
+    '<div class="waveform-loader"><span></span><span></span><span></span><span></span><span></span></div><p>Loading hand tracking model...</p>';
   await tracker.init();
   loadingEl.classList.add('hidden');
+
+  // Staggered entrance animation for toolbar
+  toolbar.classList.add('entered');
+  const toolbarChildren = toolbar.querySelectorAll('.btn, .toolbar-select, .divider, .btn-group, .detected-key-badge');
+  toolbarChildren.forEach((child, i) => {
+    const el = child as HTMLElement;
+    el.style.opacity = '0';
+    el.style.animation = `toolbar-enter 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards`;
+    el.style.animationDelay = `${80 * (i + 1)}ms`;
+  });
 
   // 7.5 Show welcome popup on first visit
   if (WelcomePopup.shouldShow()) {
@@ -197,23 +208,93 @@ async function main() {
   // 8. Resume audio on any click
   document.addEventListener('click', () => audioEngine.resume(), { once: true });
 
-  // 9. Keyboard shortcuts (mode-specific)
+  // 9. Keyboard shortcuts
   document.addEventListener('keydown', (e) => {
-    if (activeMode === thereminMode) {
-      // Arrow keys to shift theremin pitch range
-      if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        thereminMode.rangeOffset += 0.5;
-      } else if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        thereminMode.rangeOffset -= 0.5;
-      }
-    } else if (activeMode === formantMode) {
-      // H key to toggle tutorial guide
-      if (e.key === 'h' || e.key === 'H') {
-        e.preventDefault();
-        formantMode.guideVisible = !formantMode.guideVisible;
-      }
+    // Don't capture shortcuts when typing in an input/select
+    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) return;
+
+    switch (e.key) {
+      // Mode switching
+      case '1':
+        modeSelector.select('theremin');
+        break;
+      case '2':
+        modeSelector.select('formant');
+        break;
+
+      // Theremin-specific shortcuts
+      case 'a':
+      case 'A':
+        if (activeMode === thereminMode) {
+          e.preventDefault();
+          thereminControls.toggleAudio();
+        }
+        break;
+      case 's':
+      case 'S':
+        if (activeMode === thereminMode) {
+          e.preventDefault();
+          thereminControls.toggleScaleSnap();
+        }
+        break;
+      case 'l':
+      case 'L':
+        if (activeMode === thereminMode) {
+          e.preventDefault();
+          thereminControls.toggleListen();
+        }
+        break;
+      case 'f':
+      case 'F':
+        if (activeMode === thereminMode) {
+          e.preventDefault();
+          thereminControls.setYMode('filter');
+        }
+        break;
+      case 't':
+      case 'T':
+        if (activeMode === thereminMode) {
+          e.preventDefault();
+          thereminControls.setYMode('timbre');
+        }
+        break;
+      case 'v':
+      case 'V':
+        if (activeMode === thereminMode) {
+          e.preventDefault();
+          thereminControls.setYMode('vibrato');
+        }
+        break;
+      case 'o':
+      case 'O':
+        if (activeMode === thereminMode) {
+          e.preventDefault();
+          thereminControls.setYMode('octave');
+        }
+        break;
+
+      // Theremin range shifting
+      case 'ArrowUp':
+        if (activeMode === thereminMode) {
+          e.preventDefault();
+          thereminMode.rangeOffset += 0.5;
+        }
+        break;
+      case 'ArrowDown':
+        if (activeMode === thereminMode) {
+          e.preventDefault();
+          thereminMode.rangeOffset -= 0.5;
+        }
+        break;
+
+      // Formant guide toggle
+      case 'h':
+      case 'H':
+        if (activeMode === formantMode) {
+          e.preventDefault();
+          formantMode.guideVisible = !formantMode.guideVisible;
+        }
+        break;
     }
   });
 

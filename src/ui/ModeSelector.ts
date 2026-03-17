@@ -8,6 +8,8 @@ export class ModeSelector {
 
   constructor(container: HTMLElement) {
     this.container = container;
+    this.container.setAttribute('role', 'radiogroup');
+    this.container.setAttribute('aria-label', 'Instrument mode');
     this.createButtons();
   }
 
@@ -21,6 +23,8 @@ export class ModeSelector {
       const btn = document.createElement('button');
       btn.className = 'btn mode-btn';
       btn.textContent = mode.label;
+      btn.setAttribute('role', 'radio');
+      btn.setAttribute('aria-checked', String(mode.key === this._current));
       btn.addEventListener('click', () => this.select(mode.key));
       this.container.appendChild(btn);
       this.buttons.set(mode.key, btn);
@@ -38,7 +42,9 @@ export class ModeSelector {
 
   private updateActive(): void {
     for (const [key, btn] of this.buttons) {
-      btn.classList.toggle('active', key === this._current);
+      const isActive = key === this._current;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-checked', String(isActive));
     }
   }
 
