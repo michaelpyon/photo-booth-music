@@ -73,8 +73,10 @@ export class WelcomePopup {
           <rect x="51" y="30" width="9" height="20" rx="4.5" fill="#333" stroke="#555" stroke-width="1"/>
           <!-- Ring finger (curled) -->
           <rect x="44" y="72" width="8" height="12" rx="4" fill="#333" stroke="#555" stroke-width="1"/>
+          <!-- Thumb connector (fills gap between thumb and palm) -->
+          <rect x="33" y="47" width="6" height="11" fill="#333"/>
           <!-- Thumb -->
-          <rect x="22" y="48" width="18" height="9" rx="4.5" fill="#333" stroke="#555" stroke-width="1"/>
+          <rect x="20" y="47" width="18" height="11" rx="4.5" fill="#333" stroke="#555" stroke-width="1"/>
           <!-- Fingertip glow -->
           <circle cx="44" cy="12" r="8" fill="none" stroke="#0ff" stroke-width="0.8" opacity="0.5">
             <animate attributeName="r" values="6;10;6" dur="2s" repeatCount="indefinite"/>
