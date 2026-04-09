@@ -27,9 +27,9 @@
         position: fixed;
         inset: 0;
         z-index: 9999;
-        background: #0f0f0f;
-        color: #e0e0e0;
-        font-family: 'Sora', system-ui, sans-serif;
+        background: var(--bg, #08080c);
+        color: var(--text, #f0eff4);
+        font-family: var(--font-body, 'Sora', system-ui, sans-serif);
         padding: 2rem;
         text-align: center;
         flex-direction: column;
@@ -42,11 +42,11 @@
         font-size: 1.8rem;
         font-weight: 700;
         margin: 0;
-        color: #a78bfa;
+        color: var(--accent-secondary, #a78bfa);
       }
       .mobile-gate .tagline {
         font-size: 1rem;
-        color: #c4b5fd;
+        color: var(--accent-secondary-light, #c4b5fd);
         margin: 0;
       }
       .mobile-gate .preview-card {
@@ -57,12 +57,12 @@
         width: 100%;
         max-width: 100%;
         border-radius: 12px;
-        border: 1px solid rgba(167, 139, 250, 0.3);
+        border: 1px solid var(--accent-secondary-border, rgba(167, 139, 250, 0.2));
         display: block;
       }
       .mobile-gate .explain {
         font-size: 0.9rem;
-        color: #999;
+        color: var(--text-muted, #9998a5);
         max-width: 320px;
         line-height: 1.6;
         margin: 0 auto;
@@ -71,8 +71,8 @@
         width: 100%;
         max-width: 320px;
         min-height: 52px;
-        background: #a78bfa;
-        color: #0f0f0f;
+        background: var(--accent-secondary, #a78bfa);
+        color: var(--bg, #08080c);
         border: none;
         border-radius: 10px;
         font-size: 1rem;
@@ -83,10 +83,10 @@
         transition: background 0.2s;
       }
       .mobile-gate button:active {
-        background: #c4b5fd;
+        background: var(--accent-secondary-light, #c4b5fd);
       }
       .mobile-gate .back-link {
-        color: #a78bfa;
+        color: var(--accent-secondary, #a78bfa);
         font-size: 0.9rem;
         text-decoration: none;
       }
