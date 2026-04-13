@@ -6,9 +6,11 @@ import { KeyDetector } from './audio/KeyDetector.ts';
 import { CanvasRenderer } from './rendering/CanvasRenderer.ts';
 import { ThereminMode } from './modes/ThereminMode.ts';
 import { FormantMode } from './modes/FormantMode.ts';
+import { ConductorMode } from './modes/ConductorMode.ts';
 import { ModeSelector } from './ui/ModeSelector.ts';
 import type { ModeName } from './ui/ModeSelector.ts';
 import { ThereminControls } from './ui/ThereminControls.ts';
+import { ConductorControls } from './ui/ConductorControls.ts';
 import { WelcomePopup } from './ui/WelcomePopup.ts';
 import type { TrackingResult } from './tracking/HandTracker.ts';
 
@@ -103,7 +105,8 @@ async function main() {
   // 4. Create modes
   const thereminMode = new ThereminMode(audioEngine);
   const formantMode = new FormantMode(audioEngine);
-  let activeMode: ThereminMode | FormantMode = thereminMode;
+  const conductorMode = new ConductorMode();
+  let activeMode: ThereminMode | FormantMode | ConductorMode = thereminMode;
 
   // 5. Create key detector
   const keyDetector = new KeyDetector(audioEngine.ctx);
@@ -111,6 +114,8 @@ async function main() {
   // 6. Create UI
   const modeSelector = new ModeSelector(modeSelectorEl);
   const thereminControls = new ThereminControls(modeControlsEl);
+  const conductorControls = new ConductorControls(modeControlsEl);
+  conductorControls.hide();
 
   // Wire theremin controls
   thereminControls.onAudioToggle = (on) => {
@@ -158,16 +163,61 @@ async function main() {
     thereminMode.currentChord = chord?.label ?? '';
   };
 
+  // Wire conductor controls
+  conductorControls.onPlayPause = () => {
+    audioEngine.resume();
+    if (conductorMode.playing) {
+      conductorMode.pause();
+      conductorControls.updatePlaying(false);
+    } else if (conductorMode.generativeMode) {
+      conductorMode.startGenerative();
+      conductorControls.updatePlaying(true);
+    } else {
+      conductorMode.playSong();
+      conductorControls.updatePlaying(true);
+    }
+  };
+
+  conductorControls.onSongChange = (index: number) => {
+    audioEngine.resume();
+    conductorMode.playSong(index);
+    conductorControls.updatePlaying(true);
+    conductorControls.updateGenerative(false);
+  };
+
+  conductorControls.onGenerativeToggle = () => {
+    audioEngine.resume();
+    if (conductorMode.generativeMode) {
+      conductorMode.stop();
+      conductorControls.updateGenerative(false);
+      conductorControls.updatePlaying(false);
+    } else {
+      conductorMode.startGenerative();
+      conductorControls.updateGenerative(true);
+      conductorControls.updatePlaying(true);
+    }
+  };
+
+  conductorMode.onStateChange = (state) => {
+    conductorControls.updateTempo(state.tempo);
+    conductorControls.updatePlaying(state.playing);
+  };
+
   // Wire mode switching
   modeSelector.onChange = (mode: ModeName) => {
     audioEngine.resume();
     activeMode.deactivate();
+    thereminControls.hide();
+    conductorControls.hide();
+
     if (mode === 'theremin') {
       activeMode = thereminMode;
       thereminControls.show();
-    } else {
+    } else if (mode === 'formant') {
       activeMode = formantMode;
-      thereminControls.hide();
+    } else {
+      activeMode = conductorMode;
+      conductorControls.show();
     }
     activeMode.activate();
   };
@@ -213,6 +263,12 @@ async function main() {
       if (e.key === 'h' || e.key === 'H') {
         e.preventDefault();
         formantMode.guideVisible = !formantMode.guideVisible;
+      }
+    } else if (activeMode === conductorMode) {
+      // Space to play/pause
+      if (e.key === ' ') {
+        e.preventDefault();
+        conductorControls.onPlayPause?.();
       }
     }
   });

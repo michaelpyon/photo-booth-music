@@ -21,14 +21,11 @@ export class ConductorEngine {
     // Strings: PolySynth for chords
     const stringsGain = new Tone.Gain(0.8).connect(this.masterGain);
     const strings = new Tone.PolySynth(Tone.Synth, {
-      maxPolyphony: 8,
-      voice: Tone.Synth,
-      options: {
-        oscillator: { type: 'fatsawtooth', spread: 20, count: 3 },
-        envelope: { attack: 0.3, decay: 0.2, sustain: 0.8, release: 1.0 },
-        volume: -8,
-      },
+      oscillator: { type: 'fatsawtooth', spread: 20, count: 3 },
+      envelope: { attack: 0.3, decay: 0.2, sustain: 0.8, release: 1.0 },
+      volume: -8,
     }).connect(stringsGain);
+    strings.maxPolyphony = 8;
     this.synths.set('strings', strings);
     this.gains.set('strings', stringsGain);
 

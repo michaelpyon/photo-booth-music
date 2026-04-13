@@ -1,4 +1,4 @@
-export type ModeName = 'theremin' | 'formant';
+export type ModeName = 'theremin' | 'formant' | 'conductor';
 
 export class ModeSelector {
   private container: HTMLElement;
@@ -15,6 +15,7 @@ export class ModeSelector {
     const modes: { key: ModeName; label: string }[] = [
       { key: 'theremin', label: 'Theremin' },
       { key: 'formant', label: 'Voice Box' },
+      { key: 'conductor', label: 'Conductor' },
     ];
 
     for (const mode of modes) {

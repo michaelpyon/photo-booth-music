@@ -585,6 +585,30 @@ body {
   transform: scale(0.98);
 }
 
+/* Conductor controls */
+.tempo-display {
+  padding: 0.3rem 0.7rem;
+  border-radius: 12px;
+  background: var(--accent-secondary-bg);
+  border: 1px solid var(--accent-secondary-border);
+  color: var(--accent-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.conductor-play-btn.active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.generative-btn {
+  font-size: 0.7rem !important;
+}
+
 /* Start prompt */
 #start-prompt {
   position: fixed;
