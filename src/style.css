@@ -236,6 +236,11 @@ body {
   background: var(--accent-secondary-light);
 }
 
+.denied-reload:focus-visible {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
+}
+
 .denied-about {
   text-align: left;
   margin-bottom: 1.25rem;
@@ -299,7 +304,8 @@ body {
 
 /* Buttons */
 .btn {
-  padding: 0.4rem 0.9rem;
+  padding: 0.55rem 0.9rem;
+  min-height: 44px;
   border: 1px solid var(--border-hover);
   border-radius: 20px;
   background: var(--surface);
@@ -308,7 +314,7 @@ body {
   font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   user-select: none;
@@ -317,6 +323,11 @@ body {
 .btn:hover {
   border-color: var(--text-subtle);
   color: var(--text);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
 }
 
 .btn.active {
@@ -372,6 +383,7 @@ body {
 /* Toolbar select dropdowns */
 .toolbar-select {
   padding: 0.35rem 0.6rem;
+  min-height: 44px;
   border: 1px solid var(--border-hover);
   border-radius: 12px;
   background: var(--surface);
@@ -395,8 +407,10 @@ body {
   border-color: var(--text-subtle);
 }
 
-.toolbar-select:focus {
+.toolbar-select:focus-visible {
   border-color: var(--accent-secondary);
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 2px;
 }
 
 .toolbar-select option {
@@ -572,13 +586,18 @@ body {
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   text-transform: uppercase;
 }
 
 .welcome-btn:hover {
   transform: scale(1.04);
   box-shadow: 0 0 20px var(--accent-glow-strong);
+}
+
+.welcome-btn:focus-visible {
+  outline: 2px solid var(--accent-secondary);
+  outline-offset: 3px;
 }
 
 .welcome-btn:active {
