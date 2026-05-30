@@ -55,6 +55,22 @@ previews already resolve. No URL change made.
 
 ## Prioritized plan
 
+### Shipped wave 3
+
+- [x] Visible in-tune confidence meter during play-along (was bigger bet 8). The
+  KeyDetector already reported a confidence value that only showed as a small text
+  percentage in the badge. Turned it into a real live meter (`confidence-meter` in
+  `src/ui/ThereminControls.ts` + styles in `src/style.css`): a labelled horizontal bar
+  that fills and glows as the room-key lock strengthens, with a `locked` state past 70%
+  and an ARIA meter role. Makes the headline "snap you to the key" trick feel live and
+  screenshot-worthy. Additive, tsc + build verified.
+- [x] Canonical / OG host re-check (autonomous-safe canonical fix). Re-curled both hosts
+  with a desktop browser user agent on 2026-05-30: `air-composer.michaelpyon.com` and
+  `air-composer.vercel.app` both return HTTP 200 with the identical etag and serve this
+  exact Air Composer page, and `air-composer.michaelpyon.com/og.png` returns HTTP 200
+  image/png (229 KB). Canonical, og:url, og:image, and twitter:image already point at the
+  preferred custom domain. No change needed; verified, not assumed.
+
 ### Shipped wave 2
 
 - README.md (was quick win 3). The repo had no README or CLAUDE.md, so a creative

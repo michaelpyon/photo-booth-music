@@ -559,6 +559,65 @@ body {
   color: var(--bg);
 }
 
+/* Live in-tune confidence meter (play-along). */
+.confidence-meter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 12px;
+  background: var(--accent-secondary-bg);
+  border: 1px solid var(--accent-secondary-border);
+  transition: border-color 0.2s ease;
+}
+
+.confidence-meter.locked {
+  border-color: var(--accent-secondary);
+}
+
+.confidence-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+  white-space: nowrap;
+}
+
+.confidence-meter.locked .confidence-label {
+  color: var(--accent-secondary-light);
+}
+
+.confidence-track {
+  position: relative;
+  width: 56px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--surface-hover);
+  overflow: hidden;
+}
+
+.confidence-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 0%;
+  border-radius: 3px;
+  background: var(--accent-secondary);
+  transition: width 0.3s ease, box-shadow 0.2s ease;
+}
+
+.confidence-meter.locked .confidence-fill {
+  box-shadow: 0 0 8px var(--accent-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confidence-fill {
+    transition: width 0.3s ease;
+  }
+}
+
 .divider {
   width: 1px;
   height: 24px;

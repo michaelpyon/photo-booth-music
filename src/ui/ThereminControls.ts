@@ -14,6 +14,9 @@ export class ThereminControls {
   private scaleSnapBtn!: HTMLButtonElement;
   private listenBtn!: HTMLButtonElement;
   private detectedKeyBadge!: HTMLSpanElement;
+  private confidenceMeter!: HTMLDivElement;
+  private confidenceFill!: HTMLDivElement;
+  private confidenceLabel!: HTMLSpanElement;
   private yModeButtons: Map<YAxisMode, HTMLButtonElement> = new Map();
   private rootSelect!: HTMLSelectElement;
   private scaleSelect!: HTMLSelectElement;
@@ -117,9 +120,12 @@ export class ThereminControls {
         this.detectedKeyBadge.textContent = 'Finding the key...';
         this.detectedKeyBadge.classList.remove('snapped');
         this.detectedKeyBadge.style.display = '';
+        this.confidenceMeter.style.display = '';
+        this.setConfidence(0);
       } else {
         this.detectedKeyBadge.style.display = 'none';
         this.detectedKeyBadge.classList.remove('snapped');
+        this.confidenceMeter.style.display = 'none';
       }
 
       this.onListenToggle?.(this._listening);
@@ -133,6 +139,42 @@ export class ThereminControls {
     this.detectedKeyBadge.textContent = 'Finding the key...';
     this.detectedKeyBadge.style.display = 'none';
     this.container.appendChild(this.detectedKeyBadge);
+
+    // Live in-tune confidence meter. The key detector reports how sure it is
+    // about the room's key. A text percentage alone read as noise, so this
+    // turns it into a small horizontal bar that fills as the lock strengthens,
+    // making the headline "snap you to the key" trick feel live and tangible.
+    this.confidenceMeter = document.createElement('div');
+    this.confidenceMeter.className = 'confidence-meter';
+    this.confidenceMeter.style.display = 'none';
+    this.confidenceMeter.setAttribute('role', 'meter');
+    this.confidenceMeter.setAttribute('aria-label', 'In-tune match confidence');
+    this.confidenceMeter.setAttribute('aria-valuemin', '0');
+    this.confidenceMeter.setAttribute('aria-valuemax', '100');
+
+    const track = document.createElement('div');
+    track.className = 'confidence-track';
+    this.confidenceFill = document.createElement('div');
+    this.confidenceFill.className = 'confidence-fill';
+    track.appendChild(this.confidenceFill);
+
+    this.confidenceLabel = document.createElement('span');
+    this.confidenceLabel.className = 'confidence-label';
+    this.confidenceLabel.textContent = 'In tune';
+
+    this.confidenceMeter.appendChild(this.confidenceLabel);
+    this.confidenceMeter.appendChild(track);
+    this.container.appendChild(this.confidenceMeter);
+  }
+
+  /** Drive the live confidence meter. confidence is 0..1. */
+  private setConfidence(confidence: number): void {
+    const pct = Math.max(0, Math.min(100, Math.round(confidence * 100)));
+    this.confidenceFill.style.width = `${pct}%`;
+    this.confidenceMeter.setAttribute('aria-valuenow', String(pct));
+    // Strong lock (>=70%) gets the full violet glow so a screenshot reads
+    // "in tune"; a weaker lock stays dimmer.
+    this.confidenceMeter.classList.toggle('locked', pct >= 70);
   }
 
   /** Called externally when key detector identifies a key */
@@ -141,6 +183,7 @@ export class ThereminControls {
     const pct = Math.round(confidence * 100);
     this.detectedKeyBadge.textContent = `Snapped to ${root} ${scale} · ${pct}%`;
     this.detectedKeyBadge.classList.add('snapped');
+    this.setConfidence(confidence);
 
     // Sync dropdowns
     this.rootSelect.value = root;
