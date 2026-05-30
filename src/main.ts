@@ -12,6 +12,7 @@ import type { ModeName } from './ui/ModeSelector.ts';
 import { ThereminControls } from './ui/ThereminControls.ts';
 import { ConductorControls } from './ui/ConductorControls.ts';
 import { WelcomePopup } from './ui/WelcomePopup.ts';
+import { ClipRecorderUI } from './ui/ClipRecorderUI.ts';
 import type { TrackingResult } from './tracking/HandTracker.ts';
 
 async function startCamera(
@@ -423,6 +424,11 @@ async function main() {
     }
   }
   loadingEl.classList.add('hidden');
+
+  // 7.4 Record & share: capture the overlay canvas (video + visual feedback)
+  // plus the live audio mix into a shareable webm clip. Hidden until now so it
+  // only appears once the instrument is live. Feature-detects internally.
+  new ClipRecorderUI(canvas, audioEngine);
 
   // 7.5 Show welcome popup on first visit
   if (WelcomePopup.shouldShow()) {

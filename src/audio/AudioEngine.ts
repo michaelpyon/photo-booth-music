@@ -19,6 +19,19 @@ export class AudioEngine {
     }
   }
 
+  /**
+   * Tap the master output as a MediaStream for recording. Every instrument
+   * routes through masterGain, so the analyser node (masterGain -> analyser
+   * -> destination) carries the full mix. We fan that same signal into a
+   * MediaStreamAudioDestinationNode without touching the existing path to the
+   * speakers, so playback is unchanged while recording captures the live mix.
+   */
+  createRecordingTap(): MediaStreamAudioDestinationNode {
+    const dest = this.ctx.createMediaStreamDestination();
+    this.analyser.connect(dest);
+    return dest;
+  }
+
   get currentTime(): number {
     return this.ctx.currentTime;
   }
