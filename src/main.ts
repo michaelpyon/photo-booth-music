@@ -12,6 +12,7 @@ import type { ModeName } from './ui/ModeSelector.ts';
 import { ThereminControls } from './ui/ThereminControls.ts';
 import { ConductorControls } from './ui/ConductorControls.ts';
 import { WelcomePopup } from './ui/WelcomePopup.ts';
+import { FirstJamCoach } from './ui/FirstJamCoach.ts';
 import { ClipRecorderUI } from './ui/ClipRecorderUI.ts';
 import { KeyboardHints } from './ui/KeyboardHints.ts';
 import type { HintMode } from './ui/KeyboardHints.ts';
@@ -441,11 +442,21 @@ async function main() {
   // undiscoverable (Arrow keys, H, Space). Dismissible, remembered per device.
   keyboardHints = new KeyboardHints('theremin');
 
-  // 7.5 Show welcome popup on first visit
+  // 7.5 Show welcome popup on first visit, then a short scripted "first jam"
+  // coach over the live instrument so it is never silent and unexplained.
+  // The coach is purely a text overlay (no audio/tracking coupling) and shows
+  // once per device. If the welcome popup shows, chain the coach to its
+  // dismissal so the two never overlap.
+  const maybeStartCoach = () => {
+    if (FirstJamCoach.shouldShow()) new FirstJamCoach();
+  };
   if (WelcomePopup.shouldShow()) {
     new WelcomePopup(() => {
       audioEngine.resume();
+      maybeStartCoach();
     });
+  } else {
+    maybeStartCoach();
   }
 
   // 8. Resume audio on any click

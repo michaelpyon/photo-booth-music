@@ -57,6 +57,14 @@ previews already resolve. No URL change made.
 
 ### Shipped wave 3
 
+- [x] Guided "first jam" coach over the live instrument (was bigger bet 6). Added
+  `src/ui/FirstJamCoach.ts` + styles in `src/style.css`: a small scripted overlay pinned
+  below the toolbar that walks a first-timer through 3 short prompts (raise your left
+  hand for pitch, raise your right hand for volume and tone, hit Match the music to play
+  in tune), with step dots, Next, and Skip. Auto-advances on a timer, shows once per
+  device, and is a pure text overlay with no audio or tracking coupling. Chained off the
+  welcome popup dismissal so the two never overlap. Respects reduced motion. So the empty
+  instrument is never silent and unexplained. Additive, full build verified.
 - [x] One-tap share-the-link intents from the record flow (was bigger bet 5). The clip
   result panel already had Download / native Share / Done. Added a "Post the link" row
   with X, Reddit, and Copy link buttons (`src/ui/ClipRecorderUI.ts` + styles in
