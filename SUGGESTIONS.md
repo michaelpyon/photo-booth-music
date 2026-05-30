@@ -44,15 +44,30 @@ Working and honest. Evidence:
   pre-camera landing with headline "Play a theremin with your hands. Just a webcam.",
   the "Start playing" button, and the privacy note. No deploy mismatch for this app.
 
-Minor honesty nit (not a fix this pass): `og:url`, `canonical`, and the OG/Twitter
-image point at `https://air-composer.michaelpyon.com`, but the live deploy is
-`air-composer.vercel.app`. If the custom domain is not actually attached, social
-cards and the canonical tag resolve to a host that may not serve the app. See quick
-wins below.
+Canonical and OG host check (resolved wave 2, no change needed): curled both hosts
+with a Twitterbot user agent. `https://air-composer.michaelpyon.com` is attached and
+serves this exact app (HTTP 200, same etag as `air-composer.vercel.app`), and
+`https://air-composer.michaelpyon.com/og.png` returns HTTP 200 with content-type
+image/png, a real 229 KB raster card. So `og:url`, `canonical`, `og:image`,
+`twitter:image`, and the in-app copy-link all point at a working host. The earlier
+mismatch worry was unfounded, the custom domain is the correct canonical and link
+previews already resolve. No URL change made.
 
 ## Prioritized plan
 
-### Implemented this pass (quick win, shipped)
+### Shipped wave 2
+
+- README.md (was quick win 3). The repo had no README or CLAUDE.md, so a creative
+  coder landing from a shared clip had nothing to read before forking. Added a short,
+  accurate README: what it is, the 3 modes (theremin, formant talk box, conductor) with
+  their real keyboard shortcuts, play-along key detection, record-and-share, local run
+  steps (npm install, npm run dev), browser support, and tech stack. Static, build
+  verified, no deploy needed. Helps the share-driven discovery loop this persona drives.
+- Verified the canonical and OG host defect was not real (see ground-truth note above).
+  Custom domain is attached and serving, og.png is a real PNG, link previews resolve.
+  No change made.
+
+### Implemented in the prior pass (quick win, shipped)
 
 1. Discoverable keyboard shortcuts. The app already wired Arrow keys (theremin pitch
    range), H (formant guide), and Space (conductor play and pause) in `src/main.ts`,
@@ -67,17 +82,7 @@ wins below.
 
 ### Quick wins (not yet done)
 
-2. Fix the canonical and OG host mismatch. In `index.html`, either attach the
-   `air-composer.michaelpyon.com` domain in Vercel or point `og:url`, `og:image`,
-   `twitter:image`, and `canonical` at `air-composer.vercel.app`. Right now a pasted
-   link's social card and canonical tag reference a host that may not be live, which
-   hurts exactly the share-driven growth this persona drives. Effort S.
-   Needs a deploy (or a Vercel domain attach) to verify.
-3. Add a minimal README.md. There is no README or CLAUDE.md. A short "what it is, how
-   to run (npm install, npm run dev), browser support" file helps the creative-coder
-   persona who will land on the repo from a shared clip and want to fork it. Effort S.
-   Static, no deploy needed.
-4. Audio "first note" warmth check. Confirm the default theremin patch does not start
+2. Audio "first note" warmth check. Confirm the default theremin patch does not start
    harsh or clip on the very first gesture, since the persona judges audio quality in
    the first 2 seconds. If needed, soften the default filter or attack in
    `src/audio/ThereminSynth.ts`. Effort S to M. Deploy needed to verify by ear.
