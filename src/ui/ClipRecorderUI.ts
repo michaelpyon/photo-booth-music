@@ -2,6 +2,12 @@ import { ClipRecorder } from '../recording/ClipRecorder.ts';
 import type { Clip } from '../recording/ClipRecorder.ts';
 import type { AudioEngine } from '../audio/AudioEngine.ts';
 
+// Canonical public URL for this app (verified live, matches the canonical
+// and og:url in index.html). Used for the share-link intents below.
+const APP_URL = 'https://air-composer.michaelpyon.com';
+const SHARE_CAPTION =
+  'I just played this with my hands using only a webcam, no installs. Air Composer:';
+
 /**
  * Floating "Record clip" control plus the result panel. Lives over the
  * viewport so a player can capture a 15 second clip of their hands making
@@ -114,9 +120,63 @@ export class ClipRecorderUI {
 
     this.panel.appendChild(actions);
 
+    // Share-link row. A tweet or Reddit post cannot carry a local video file
+    // via a web intent, so these prefill a post with the app link and caption
+    // and the player attaches their downloaded clip. Always available, no
+    // dependency on the Web Share API.
+    const shareRow = document.createElement('div');
+    shareRow.className = 'clip-share-row';
+
+    const shareTo = document.createElement('span');
+    shareTo.className = 'clip-share-to';
+    shareTo.textContent = 'Post the link';
+    shareRow.appendChild(shareTo);
+
+    const xLink = document.createElement('a');
+    xLink.className = 'clip-link clip-link-x';
+    xLink.textContent = 'X';
+    xLink.target = '_blank';
+    xLink.rel = 'noopener noreferrer';
+    xLink.href =
+      'https://twitter.com/intent/tweet?text=' +
+      encodeURIComponent(`${SHARE_CAPTION} ${APP_URL}`);
+    shareRow.appendChild(xLink);
+
+    const redditLink = document.createElement('a');
+    redditLink.className = 'clip-link clip-link-reddit';
+    redditLink.textContent = 'Reddit';
+    redditLink.target = '_blank';
+    redditLink.rel = 'noopener noreferrer';
+    redditLink.href =
+      'https://www.reddit.com/submit?url=' +
+      encodeURIComponent(APP_URL) +
+      '&title=' +
+      encodeURIComponent('Air Composer: play a theremin with your hands, just a webcam');
+    shareRow.appendChild(redditLink);
+
+    const copyLink = document.createElement('button');
+    copyLink.type = 'button';
+    copyLink.className = 'clip-link clip-link-copy';
+    copyLink.textContent = 'Copy link';
+    copyLink.addEventListener('click', async () => {
+      const original = 'Copy link';
+      try {
+        await navigator.clipboard.writeText(APP_URL);
+        copyLink.textContent = 'Copied';
+      } catch (_e) {
+        copyLink.textContent = APP_URL;
+      }
+      window.setTimeout(() => {
+        copyLink.textContent = original;
+      }, 1800);
+    });
+    shareRow.appendChild(copyLink);
+
+    this.panel.appendChild(shareRow);
+
     const saved = document.createElement('p');
     saved.className = 'clip-saved';
-    saved.textContent = 'Clip saved. Download or share it.';
+    saved.textContent = 'Clip saved. Download it, then post the link and attach your clip.';
     this.panel.appendChild(saved);
 
     this.panel.classList.remove('hidden');

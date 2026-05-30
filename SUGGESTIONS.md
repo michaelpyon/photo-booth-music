@@ -57,6 +57,14 @@ previews already resolve. No URL change made.
 
 ### Shipped wave 3
 
+- [x] One-tap share-the-link intents from the record flow (was bigger bet 5). The clip
+  result panel already had Download / native Share / Done. Added a "Post the link" row
+  with X, Reddit, and Copy link buttons (`src/ui/ClipRecorderUI.ts` + styles in
+  `src/style.css`). These open prefilled web intents (twitter.com/intent/tweet,
+  reddit.com/submit) with the verified canonical app URL and an honest caption, plus a
+  clipboard copy. A web intent cannot attach a local video file, so the saved-clip note
+  now honestly tells the player to download the clip and attach it to the post. Always
+  available, independent of the Web Share API. Additive, tsc + build verified.
 - [x] Visible in-tune confidence meter during play-along (was bigger bet 8). The
   KeyDetector already reported a confidence value that only showed as a small text
   percentage in the badge. Turned it into a real live meter (`confidence-meter` in
