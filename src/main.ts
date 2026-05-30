@@ -13,6 +13,8 @@ import { ThereminControls } from './ui/ThereminControls.ts';
 import { ConductorControls } from './ui/ConductorControls.ts';
 import { WelcomePopup } from './ui/WelcomePopup.ts';
 import { ClipRecorderUI } from './ui/ClipRecorderUI.ts';
+import { KeyboardHints } from './ui/KeyboardHints.ts';
+import type { HintMode } from './ui/KeyboardHints.ts';
 import type { TrackingResult } from './tracking/HandTracker.ts';
 
 async function startCamera(
@@ -361,6 +363,10 @@ async function main() {
     conductorControls.updatePlaying(state.playing);
   };
 
+  // Context-aware keyboard hint chip. Created once the instrument is live
+  // (see below); held here so the mode switcher can update it.
+  let keyboardHints: KeyboardHints | null = null;
+
   // Wire mode switching
   modeSelector.onChange = (mode: ModeName) => {
     audioEngine.resume();
@@ -378,6 +384,7 @@ async function main() {
       conductorControls.show();
     }
     activeMode.activate();
+    keyboardHints?.setMode(mode as HintMode);
   };
 
   // Activate default mode
@@ -429,6 +436,10 @@ async function main() {
   // plus the live audio mix into a shareable webm clip. Hidden until now so it
   // only appears once the instrument is live. Feature-detects internally.
   new ClipRecorderUI(canvas, audioEngine);
+
+  // 7.45 Surface the per-mode keyboard shortcuts that were previously
+  // undiscoverable (Arrow keys, H, Space). Dismissible, remembered per device.
+  keyboardHints = new KeyboardHints('theremin');
 
   // 7.5 Show welcome popup on first visit
   if (WelcomePopup.shouldShow()) {

@@ -1028,3 +1028,86 @@ body {
   color: var(--text-muted);
   font-size: 0.9rem;
 }
+
+/* Keyboard hint chip: surfaces per-mode shortcuts (Arrow keys, H, Space)
+   that were previously undiscoverable. Bottom-left, out of the way of the
+   record control, dismissible. */
+.kbd-hints {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.5rem 0.4rem 0.7rem;
+  background: var(--toolbar-bg, rgba(18, 18, 26, 0.85));
+  border: 1px solid var(--accent-secondary-border);
+  border-radius: 999px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-family: var(--font-body, 'Sora', system-ui, sans-serif);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: auto;
+}
+
+.kbd-hints.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.kbd-hints-keys {
+  display: inline-flex;
+  gap: 0.25rem;
+}
+
+.kbd-hints-keys kbd {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.72rem;
+  line-height: 1;
+  padding: 0.2rem 0.4rem;
+  color: var(--accent-secondary-light);
+  background: var(--accent-secondary-bg);
+  border: 1px solid var(--accent-secondary-border);
+  border-radius: 5px;
+}
+
+.kbd-hints-label {
+  white-space: nowrap;
+}
+
+.kbd-hints-dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-left: 0.1rem;
+  padding: 0;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.kbd-hints-dismiss:hover {
+  color: var(--accent-secondary-light);
+  background: var(--surface-hover);
+}
+
+.kbd-hints-dismiss:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--accent-secondary);
+}
+
+@media (max-width: 900px) {
+  .kbd-hints { display: none; }
+}
