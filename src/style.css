@@ -143,6 +143,14 @@ body {
   height: 100%;
 }
 
+.landing-teaser {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--accent-secondary-light);
+  max-width: 460px;
+  margin: 0;
+}
+
 .landing-privacy {
   font-size: 0.95rem;
   font-weight: 500;
@@ -506,29 +514,49 @@ body {
   border-color: var(--text-bright);
 }
 
+/* Play-along: the headline feature. On-brand violet so it reads as an
+   inviting action, not a small utility. */
+.play-along-btn {
+  background: var(--accent-secondary-bg);
+  color: var(--accent-secondary-light);
+  border-color: var(--accent-secondary);
+}
+
+.play-along-btn:hover {
+  background: var(--accent-secondary);
+  color: var(--bg);
+  border-color: var(--accent-secondary);
+}
+
 .btn.active-listen {
-  background: var(--danger);
-  color: var(--text-bright);
-  border-color: var(--danger);
+  background: var(--accent-secondary);
+  color: var(--bg);
+  border-color: var(--accent-secondary);
   animation: listen-pulse 1.5s ease-in-out infinite;
 }
 
 @keyframes listen-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 var(--danger-glow); }
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent-secondary-border); }
   50% { box-shadow: 0 0 0 6px transparent; }
 }
 
 .detected-key-badge {
   padding: 0.3rem 0.7rem;
   border-radius: 12px;
-  background: var(--detected-key-bg);
-  border: 1px solid var(--detected-key-border);
-  color: var(--accent);
+  background: var(--accent-secondary-bg);
+  border: 1px solid var(--accent-secondary-border);
+  color: var(--accent-secondary-light);
   font-family: var(--font-mono);
   font-size: 0.7rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.detected-key-badge.snapped {
+  background: var(--accent-secondary);
+  border-color: var(--accent-secondary);
+  color: var(--bg);
 }
 
 .divider {

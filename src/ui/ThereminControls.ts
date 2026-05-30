@@ -95,11 +95,14 @@ export class ThereminControls {
     // Divider
     this.container.appendChild(this.makeDivider());
 
-    // Listen toggle
-    this.listenBtn = this.makeBtn('Listen', false, () => {
+    // Play-along toggle. This is the headline feature: it listens to a song
+    // in the room, finds the key, and snaps your notes so you sound in tune.
+    this.listenBtn = this.makeBtn('🎵 Match the music', false, () => {
       this._listening = !this._listening;
       this.listenBtn.classList.toggle('active-listen', this._listening);
-      this.listenBtn.textContent = this._listening ? 'Listening...' : 'Listen';
+      this.listenBtn.textContent = this._listening
+        ? 'Listening for the key...'
+        : '🎵 Match the music';
 
       if (this._listening) {
         // Auto-enable scale snap
@@ -111,29 +114,33 @@ export class ThereminControls {
           this.scaleSelect.style.display = '';
           this.onScaleSnapToggle?.(true);
         }
+        this.detectedKeyBadge.textContent = 'Finding the key...';
+        this.detectedKeyBadge.classList.remove('snapped');
         this.detectedKeyBadge.style.display = '';
       } else {
         this.detectedKeyBadge.style.display = 'none';
+        this.detectedKeyBadge.classList.remove('snapped');
       }
 
       this.onListenToggle?.(this._listening);
     });
-    this.listenBtn.classList.add('listen-btn');
+    this.listenBtn.classList.add('play-along-btn');
     this.container.appendChild(this.listenBtn);
 
     // Detected key badge (hidden until listening)
     this.detectedKeyBadge = document.createElement('span');
     this.detectedKeyBadge.className = 'detected-key-badge';
-    this.detectedKeyBadge.textContent = '...';
+    this.detectedKeyBadge.textContent = 'Finding the key...';
     this.detectedKeyBadge.style.display = 'none';
     this.container.appendChild(this.detectedKeyBadge);
   }
 
   /** Called externally when key detector identifies a key */
   setDetectedKey(root: string, scale: string, confidence: number): void {
-    // Update the badge
+    // Update the badge with the snapped key and a clear in-tune signal.
     const pct = Math.round(confidence * 100);
-    this.detectedKeyBadge.textContent = `${root} ${scale} (${pct}%)`;
+    this.detectedKeyBadge.textContent = `Snapped to ${root} ${scale} · ${pct}%`;
+    this.detectedKeyBadge.classList.add('snapped');
 
     // Sync dropdowns
     this.rootSelect.value = root;
