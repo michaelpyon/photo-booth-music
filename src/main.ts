@@ -58,12 +58,170 @@ async function startCamera(
   }
 }
 
+/**
+ * Lightweight landing demo. Stylized hands trail glowing violet note-streaks
+ * with a waveform pulse, evoking hand to sound, with no camera required.
+ * Autoplays and loops until the visitor clicks "Start playing".
+ *
+ * SWAP POINT: to show a real screen recording instead, swap the
+ * <canvas id="demo-canvas"> in index.html for a looping <video> and delete
+ * this function plus its call site.
+ */
+function startDemoAnimation(canvas: HTMLCanvasElement): () => void {
+  const ctx = canvas.getContext('2d')!;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const VIOLET = '#a78bfa';
+  let raf = 0;
+  let running = true;
+
+  // Two stylized "hands": a small cluster of landmark dots that drift on
+  // smooth sine paths. Each leaves a fading violet streak behind it.
+  type Trail = { x: number; y: number }[];
+  const hands = [
+    { phase: 0, baseY: 0.42, amp: 0.16, speed: 0.55, freq: 1.0, trail: [] as Trail },
+    { phase: Math.PI, baseY: 0.58, amp: 0.13, speed: 0.7, freq: 1.4, trail: [] as Trail },
+  ];
+
+  function size() {
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(1, Math.round(rect.width * dpr));
+    canvas.height = Math.max(1, Math.round(rect.height * dpr));
+  }
+  size();
+  const onResize = () => size();
+  window.addEventListener('resize', onResize);
+
+  const start = performance.now();
+
+  function frame(now: number) {
+    if (!running) return;
+    const t = (now - start) / 1000;
+    const w = canvas.width;
+    const h = canvas.height;
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = '#08080c';
+    ctx.fillRect(0, 0, w, h);
+
+    // Waveform pulse along the bottom, breathing with the hand motion.
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    ctx.strokeStyle = VIOLET;
+    ctx.lineWidth = 2 * dpr;
+    ctx.beginPath();
+    const waveY = h * 0.86;
+    const energy = 0.5 + 0.5 * Math.sin(t * 1.6);
+    for (let px = 0; px <= w; px += 4 * dpr) {
+      const k = px / w;
+      const y =
+        waveY +
+        Math.sin(k * 14 + t * 4) * 10 * dpr * energy +
+        Math.sin(k * 33 - t * 3) * 5 * dpr * energy;
+      if (px === 0) ctx.moveTo(px, y);
+      else ctx.lineTo(px, y);
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    for (const hand of hands) {
+      const x = w * (0.5 + 0.34 * Math.sin(t * hand.speed * hand.freq + hand.phase));
+      const y =
+        h *
+        (hand.baseY + hand.amp * Math.sin(t * hand.speed * 1.7 + hand.phase * 1.3));
+
+      hand.trail.push({ x, y });
+      if (hand.trail.length > 26) hand.trail.shift();
+
+      // Glowing violet note-streak.
+      for (let i = 0; i < hand.trail.length; i++) {
+        const p = hand.trail[i];
+        const a = (i / hand.trail.length) * 0.55;
+        ctx.beginPath();
+        ctx.fillStyle = VIOLET;
+        ctx.globalAlpha = a;
+        ctx.shadowColor = VIOLET;
+        ctx.shadowBlur = 16 * dpr * a;
+        ctx.arc(p.x, p.y, (2 + i * 0.25) * dpr, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+
+      // Stylized hand: a palm dot with five short finger dots fanning out.
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.fillStyle = '#f0f0f0';
+      ctx.shadowColor = VIOLET;
+      ctx.shadowBlur = 18 * dpr;
+      ctx.beginPath();
+      ctx.arc(0, 0, 5 * dpr, 0, Math.PI * 2);
+      ctx.fill();
+      for (let f = 0; f < 5; f++) {
+        const ang = -Math.PI / 2 + (f - 2) * 0.42;
+        const len = (22 + Math.sin(t * 3 + f + hand.phase) * 6) * dpr;
+        const fx = Math.cos(ang) * len;
+        const fy = Math.sin(ang) * len;
+        ctx.strokeStyle = 'rgba(240,240,240,0.85)';
+        ctx.lineWidth = 2 * dpr;
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(fx, fy);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.fillStyle = VIOLET;
+        ctx.arc(fx, fy, 2.5 * dpr, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+      ctx.shadowBlur = 0;
+    }
+
+    raf = requestAnimationFrame(frame);
+  }
+  raf = requestAnimationFrame(frame);
+
+  return () => {
+    running = false;
+    cancelAnimationFrame(raf);
+    window.removeEventListener('resize', onResize);
+  };
+}
+
 async function main() {
   const video = document.getElementById('webcam') as HTMLVideoElement;
   const canvas = document.getElementById('overlay') as HTMLCanvasElement;
   const loadingEl = document.getElementById('loading')!;
   const modeSelectorEl = document.getElementById('mode-selector')!;
   const modeControlsEl = document.getElementById('mode-controls')!;
+  const landingEl = document.getElementById('landing')!;
+  const demoCanvas = document.getElementById('demo-canvas') as HTMLCanvasElement;
+  const startBtn = document.getElementById('start-playing') as HTMLButtonElement;
+
+  // Init the audio engine up front so the "Start playing" click can resume it
+  // within the user gesture (satisfies the browser autoplay policy).
+  const audioEngine = new AudioEngine();
+
+  // Run the no-camera demo animation behind the landing until the visitor
+  // clicks "Start playing".
+  const stopDemo = startDemoAnimation(demoCanvas);
+
+  // Gate the camera + audio behind an explicit click. We do NOT call
+  // camera.start() on load anymore: that produced a cold permission prompt
+  // with no context. The click also serves as the autoplay gesture.
+  await new Promise<void>((resolve) => {
+    startBtn.addEventListener(
+      'click',
+      () => {
+        audioEngine.resume();
+        resolve();
+      },
+      { once: true },
+    );
+  });
+
+  stopDemo();
+  landingEl.classList.add('hidden');
+  loadingEl.classList.remove('hidden');
 
   // 1. Start camera (with retry support)
   const camera = new CameraManager(video);
@@ -96,8 +254,7 @@ async function main() {
     return;
   }
 
-  // 2. Init audio engine (will be resumed on first interaction)
-  const audioEngine = new AudioEngine();
+  // 2. Audio engine was created and resumed at the "Start playing" gesture.
 
   // 3. Set up canvas renderer
   const renderer = new CanvasRenderer(canvas, video);
@@ -232,9 +389,39 @@ async function main() {
   });
 
   const loadingContent = loadingEl.querySelector('.loading-content')!;
-  loadingContent.innerHTML =
+  const loadingMarkup =
     '<div class="spinner"></div><p>Loading hand tracking model...</p>';
-  await tracker.init();
+  loadingContent.innerHTML = loadingMarkup;
+
+  // Reliability: the model loads from a CDN. If it fails, show a visible
+  // on-brand error card with a retry button instead of a forever-spinner.
+  // Loop until init succeeds, waiting for a click between attempts.
+  for (;;) {
+    try {
+      await tracker.init();
+      break;
+    } catch (err) {
+      console.error(err);
+      loadingContent.innerHTML = `
+        <div class="tracker-error">
+          <div class="tracker-error-icon">&#9888;</div>
+          <h2>Could not load hand tracking</h2>
+          <p>The hand tracking model failed to download. Check your connection and try again.</p>
+          <button class="btn tracker-error-retry" type="button">Retry</button>
+        </div>
+      `;
+      await new Promise<void>((resolve) => {
+        loadingContent.querySelector('.tracker-error-retry')!.addEventListener(
+          'click',
+          () => {
+            loadingContent.innerHTML = loadingMarkup;
+            resolve();
+          },
+          { once: true },
+        );
+      });
+    }
+  }
   loadingEl.classList.add('hidden');
 
   // 7.5 Show welcome popup on first visit

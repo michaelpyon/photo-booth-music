@@ -119,7 +119,37 @@
       }
     </script>
     <div id="app">
-      <div id="loading">
+      <!-- Desktop pre-camera landing. Shown BEFORE the camera fires so a
+           first-time visitor sees the value prop, a privacy promise, and a
+           demo of the magic before the browser camera prompt. -->
+      <div id="landing">
+        <div class="landing-inner">
+          <h1 class="landing-headline">Play a theremin with your hands. Just a webcam.</h1>
+          <p class="landing-subtext">Wave your hands in the air and turn the motion into music. No installs, no plugins.</p>
+
+          <!-- Demo of the magic, no camera required. Stylized hands trail
+               glowing violet note-streaks with a waveform pulse, evoking
+               hand to sound. Autoplays and loops.
+               SWAP POINT: to show a real screen recording instead, replace
+               this <canvas id="demo-canvas"> with a muted, looping,
+               autoplaying <video> of actual gameplay and remove the
+               startDemoAnimation() call in main.ts. -->
+          <div class="landing-demo">
+            <canvas id="demo-canvas" aria-hidden="true"></canvas>
+          </div>
+
+          <p class="landing-privacy">Nothing is recorded or uploaded. Everything runs in your browser.</p>
+
+          <button id="start-playing" class="landing-cta" type="button">Start playing</button>
+
+          <div class="landing-explain">
+            <p>Your left hand controls pitch, your right hand controls volume and effects. Switch between a theremin and a talk box, snap to a musical scale, and let it listen to your room to find the key.</p>
+            <p class="landing-explain-note">Works best in a desktop browser with a webcam. Allow camera access when prompted.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="loading" class="hidden">
         <div class="loading-content">
           <div class="spinner"></div>
           <p>Warming up your air instrument...</p>

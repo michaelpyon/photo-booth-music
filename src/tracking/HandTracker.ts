@@ -24,20 +24,31 @@ export class HandTracker {
   }
 
   async init(): Promise<void> {
-    const vision = await FilesetResolver.forVisionTasks(
-      'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm'
-    );
-    this.handLandmarker = await HandLandmarker.createFromOptions(vision, {
-      baseOptions: {
-        modelAssetPath:
-          'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',
-        delegate: 'GPU',
-      },
-      numHands: 2,
-      runningMode: 'VIDEO',
-      minHandDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5,
-    });
+    // Pin the MediaPipe WASM + model versions. Floating @latest is a
+    // reliability landmine: a CDN-side bump can break the live app silently.
+    // Keep this in sync with the @mediapipe/tasks-vision version in package.json.
+    try {
+      const vision = await FilesetResolver.forVisionTasks(
+        'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.32/wasm'
+      );
+      this.handLandmarker = await HandLandmarker.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath:
+            'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task',
+          delegate: 'GPU',
+        },
+        numHands: 2,
+        runningMode: 'VIDEO',
+        minHandDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5,
+      });
+    } catch (e) {
+      // Surface a clear failure so the boot flow can show a retry card
+      // instead of hanging on a forever-spinner.
+      throw new Error(
+        `Hand tracking model failed to load. ${e instanceof Error ? e.message : String(e)}`,
+      );
+    }
   }
 
   start(): void {
