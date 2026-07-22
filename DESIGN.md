@@ -39,7 +39,7 @@ Headline: "Play a theremin with your hands. Just a webcam." Subtext keeps the no
 
 ## Metadata / OG intent (X-readiness mandatory)
 
-- Title "Air Composer | Play Music With Your Hands", description, `summary_large_image` card, `twitter:site/creator` @michaelpyon: present in HEAD and on the live deploy. `og.png` returns 200.
+- Title "Air Composer | Play Music With Your Hands", description, `summary_large_image` card, `twitter:site/creator` @mikaships: present in HEAD. `og.png` returns 200.
 - Canonical and og:url point to `https://air-composer.michaelpyon.com` while the roster live URL is `air-composer.vercel.app`; V2 verified both serve the same build (same etag). Keep michaelpyon.com as canonical; confirm the domain still resolves before the X post and update the mobile-gate copy-link URL to match whichever is posted.
 - OG image intent: a stage-dark still of hands with violet trails + gold key readout, headline overlaid in Sora. If og.png is currently generic, regenerating it to show the actual product moment is the highest-leverage X asset.
 

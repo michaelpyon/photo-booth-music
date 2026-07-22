@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Air Composer | Play Music With Your Hands</title>
     <meta name="description" content="Play a theremin and talk box with your hands using just a webcam. No installs. Runs entirely in the browser." />
@@ -15,8 +15,8 @@
     <meta name="twitter:title" content="Air Composer" />
     <meta name="twitter:description" content="Play a theremin and talk box with your hands using just a webcam. No installs." />
     <meta name="twitter:image" content="https://air-composer.michaelpyon.com/og.png" />
-    <meta name="twitter:site" content="@michaelpyon" />
-    <meta name="twitter:creator" content="@michaelpyon" />
+    <meta name="twitter:site" content="@mikaships" />
+    <meta name="twitter:creator" content="@mikaships" />
     <link rel="canonical" href="https://air-composer.michaelpyon.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -107,17 +107,9 @@
         <img src="/og.png" alt="Air Composer preview" />
       </div>
       <p class="explain">Air Composer uses your webcam to track hand movements and turn them into music. It needs a desktop browser with a camera.</p>
-      <button onclick="navigator.clipboard.writeText('https://air-composer.michaelpyon.com').then(() => this.textContent = 'Link copied!')">
-        📋 Copy Link for Desktop
-      </button>
-      <a href="https://pyon.dev" class="back-link">← Back to pyon.dev</a>
+      <button id="copy-desktop-link" type="button">Copy desktop link</button>
+      <a href="https://pyon.dev" class="back-link">Back to pyon.dev</a>
     </div>
-    <script>
-      if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 768) {
-        document.getElementById('mobile-notice').style.display = 'flex';
-        document.getElementById('app').style.display = 'none';
-      }
-    </script>
     <div id="app">
       <!-- Desktop pre-camera landing. Shown BEFORE the camera fires so a
            first-time visitor sees the value prop, a privacy promise, and a
@@ -165,6 +157,37 @@
         <canvas id="overlay"></canvas>
       </div>
     </div>
+    <script>
+      const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 768;
+      if (isMobile) {
+        document.getElementById('mobile-notice').style.display = 'flex';
+        document.getElementById('app').style.display = 'none';
+      }
+
+      const copyDesktopLink = document.getElementById('copy-desktop-link');
+      copyDesktopLink.addEventListener('click', async () => {
+        const url = 'https://air-composer.michaelpyon.com';
+        let copied = false;
+        try {
+          await navigator.clipboard.writeText(url);
+          copied = true;
+        } catch {
+          const fallback = document.createElement('textarea');
+          fallback.value = url;
+          fallback.setAttribute('readonly', '');
+          fallback.style.position = 'fixed';
+          fallback.style.opacity = '0';
+          document.body.appendChild(fallback);
+          fallback.select();
+          copied = document.execCommand('copy');
+          fallback.remove();
+        }
+        copyDesktopLink.textContent = copied ? 'Desktop link copied' : 'Copy failed. Try again';
+        window.setTimeout(() => {
+          copyDesktopLink.textContent = 'Copy desktop link';
+        }, 1800);
+      });
+    </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

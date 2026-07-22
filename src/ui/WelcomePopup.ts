@@ -43,7 +43,7 @@ export class WelcomePopup {
           </div>
         </div>
 
-        <button class="welcome-btn" id="welcome-dismiss">🎸 Let's Jam!</button>
+        <button class="welcome-btn" id="welcome-dismiss">Let's Jam!</button>
       </div>
     `;
 
@@ -83,11 +83,14 @@ export class WelcomePopup {
           </circle>
           <circle cx="44" cy="12" r="3" fill="#a78bfa" opacity="0.8"/>
         </g>
-        <!-- Musical notes floating -->
-        <g fill="#a78bfa" opacity="0.6">
-          <text x="72" y="22" font-size="16" font-family="serif">♪</text>
-          <text x="85" y="38" font-size="12" font-family="serif" opacity="0.4">♫</text>
-          <text x="78" y="52" font-size="10" font-family="serif" opacity="0.3">♩</text>
+        <!-- Abstract note stems, drawn as geometry so they render consistently. -->
+        <g stroke="#a78bfa" fill="#a78bfa" opacity="0.6" stroke-linecap="round">
+          <line x1="76" y1="12" x2="76" y2="28" stroke-width="2"/>
+          <circle cx="72" cy="29" r="4"/>
+          <line x1="92" y1="29" x2="92" y2="42" stroke-width="1.6" opacity="0.55"/>
+          <circle cx="89" cy="43" r="3" opacity="0.55"/>
+          <line x1="80" y1="48" x2="80" y2="58" stroke-width="1.4" opacity="0.35"/>
+          <circle cx="77.5" cy="59" r="2.5" opacity="0.35"/>
         </g>
         <!-- Motion lines -->
         <g stroke="#a78bfa" stroke-width="0.8" opacity="0.3">

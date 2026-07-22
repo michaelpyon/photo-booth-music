@@ -18,50 +18,6 @@ import { KeyboardHints } from './ui/KeyboardHints.ts';
 import type { HintMode } from './ui/KeyboardHints.ts';
 import type { TrackingResult } from './tracking/HandTracker.ts';
 
-async function startCamera(
-  camera: CameraManager,
-  loadingEl: HTMLElement,
-): Promise<boolean> {
-  // Reset to loading state
-  const content = loadingEl.querySelector('.loading-content')!;
-  content.innerHTML =
-    '<div class="spinner"></div><p>Requesting camera access...</p>';
-  loadingEl.classList.remove('hidden');
-
-  try {
-    await camera.start();
-    return true;
-  } catch (e) {
-    const isDenied =
-      e instanceof DOMException &&
-      (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError');
-
-    content.innerHTML = `
-      <div class="camera-denied">
-        <div class="camera-denied-icon">&#128247;</div>
-        <h2>Camera Access Required</h2>
-        <p>${
-          isDenied
-            ? 'Camera permission was denied. Air Composer needs your camera to track hand movements and turn them into music.'
-            : 'Could not access the camera. Please make sure a camera is connected and not in use by another application.'
-        }</p>
-        <button class="btn camera-denied-retry" type="button">Try Again</button>
-        ${isDenied ? '<p class="camera-denied-hint">If the browser does not prompt you again, click the camera icon in your address bar to reset permissions, then try again.</p>' : ''}
-      </div>
-    `;
-
-    return new Promise<boolean>((resolve) => {
-      content.querySelector('.camera-denied-retry')!.addEventListener(
-        'click',
-        () => {
-          resolve(startCamera(camera, loadingEl));
-        },
-        { once: true },
-      );
-    });
-  }
-}
-
 /**
  * Lightweight landing demo. Stylized hands trail glowing violet note-streaks
  * with a waveform pulse, evoking hand to sound, with no camera required.
@@ -77,6 +33,7 @@ function startDemoAnimation(canvas: HTMLCanvasElement): () => void {
   const VIOLET = '#a78bfa';
   let raf = 0;
   let running = true;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // Two stylized "hands": a small cluster of landmark dots that drift on
   // smooth sine paths. Each leaves a fading violet streak behind it.
@@ -92,7 +49,10 @@ function startDemoAnimation(canvas: HTMLCanvasElement): () => void {
     canvas.height = Math.max(1, Math.round(rect.height * dpr));
   }
   size();
-  const onResize = () => size();
+  const onResize = () => {
+    size();
+    if (reducedMotion) frame(start);
+  };
   window.addEventListener('resize', onResize);
 
   const start = performance.now();
@@ -180,9 +140,10 @@ function startDemoAnimation(canvas: HTMLCanvasElement): () => void {
       ctx.shadowBlur = 0;
     }
 
-    raf = requestAnimationFrame(frame);
+    if (!reducedMotion) raf = requestAnimationFrame(frame);
   }
-  raf = requestAnimationFrame(frame);
+  if (reducedMotion) frame(start);
+  else raf = requestAnimationFrame(frame);
 
   return () => {
     running = false;
@@ -201,9 +162,9 @@ async function main() {
   const demoCanvas = document.getElementById('demo-canvas') as HTMLCanvasElement;
   const startBtn = document.getElementById('start-playing') as HTMLButtonElement;
 
-  // Init the audio engine up front so the "Start playing" click can resume it
-  // within the user gesture (satisfies the browser autoplay policy).
-  const audioEngine = new AudioEngine();
+  // Create and resume the app-owned audio engine inside the explicit click so
+  // its context is tied to the browser's user-activation window.
+  let audioEngine!: AudioEngine;
 
   // Run the no-camera demo animation behind the landing until the visitor
   // clicks "Start playing".
@@ -216,7 +177,8 @@ async function main() {
     startBtn.addEventListener(
       'click',
       () => {
-        audioEngine.resume();
+        audioEngine = new AudioEngine();
+        void audioEngine.resume();
         resolve();
       },
       { once: true },
@@ -225,6 +187,7 @@ async function main() {
 
   stopDemo();
   landingEl.classList.add('hidden');
+  landingEl.setAttribute('aria-hidden', 'true');
   loadingEl.classList.remove('hidden');
 
   // 1. Start camera (with retry support)
@@ -234,7 +197,7 @@ async function main() {
   } catch (e) {
     loadingEl.innerHTML = `
       <div class="camera-denied">
-        <div class="denied-icon">🎵</div>
+        <div class="denied-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
         <h1 class="denied-title">Air Composer</h1>
         <p class="denied-tagline">Play music with your hands</p>
         <div class="denied-divider"></div>
@@ -252,7 +215,7 @@ async function main() {
           <p class="denied-about-heading">What is Air Composer?</p>
           <p>Wave your hands in front of your webcam to play a synthesizer. Your left hand controls pitch, your right hand controls volume and effects. No downloads, no plugins.</p>
         </div>
-        <a class="denied-back" href="https://pyon.dev">&larr; Back to pyon.dev</a>
+        <a class="denied-back" href="https://pyon.dev">Back to pyon.dev</a>
       </div>
     `;
     return;
@@ -274,8 +237,14 @@ async function main() {
 
   // 6. Create UI
   const modeSelector = new ModeSelector(modeSelectorEl);
-  const thereminControls = new ThereminControls(modeControlsEl);
-  const conductorControls = new ConductorControls(modeControlsEl);
+  const thereminControlsEl = document.createElement('div');
+  thereminControlsEl.className = 'mode-controls-group theremin-controls-group';
+  const conductorControlsEl = document.createElement('div');
+  conductorControlsEl.className = 'mode-controls-group conductor-controls-group';
+  modeControlsEl.append(thereminControlsEl, conductorControlsEl);
+
+  const thereminControls = new ThereminControls(thereminControlsEl);
+  const conductorControls = new ConductorControls(conductorControlsEl);
   conductorControls.hide();
 
   // Wire theremin controls
@@ -413,7 +382,7 @@ async function main() {
       console.error(err);
       loadingContent.innerHTML = `
         <div class="tracker-error">
-          <div class="tracker-error-icon">&#9888;</div>
+          <div class="tracker-error-kicker">TRACKING</div>
           <h2>Could not load hand tracking</h2>
           <p>The hand tracking model failed to download. Check your connection and try again.</p>
           <button class="btn tracker-error-retry" type="button">Retry</button>

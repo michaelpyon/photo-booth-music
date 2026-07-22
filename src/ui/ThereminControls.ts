@@ -100,12 +100,12 @@ export class ThereminControls {
 
     // Play-along toggle. This is the headline feature: it listens to a song
     // in the room, finds the key, and snaps your notes so you sound in tune.
-    this.listenBtn = this.makeBtn('🎵 Match the music', false, () => {
+    this.listenBtn = this.makeBtn('Match the music', false, () => {
       this._listening = !this._listening;
       this.listenBtn.classList.toggle('active-listen', this._listening);
       this.listenBtn.textContent = this._listening
         ? 'Listening for the key...'
-        : '🎵 Match the music';
+        : 'Match the music';
 
       if (this._listening) {
         // Auto-enable scale snap

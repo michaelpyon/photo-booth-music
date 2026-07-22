@@ -14,7 +14,7 @@
  */
 
 interface CoachStep {
-  emoji: string;
+  label: string;
   text: string;
   /** Auto-advance delay in ms once this step is shown. */
   hold: number;
@@ -22,17 +22,17 @@ interface CoachStep {
 
 const STEPS: CoachStep[] = [
   {
-    emoji: '🖐️',
+    label: 'PITCH',
     text: 'Raise your left hand into view. Move it left and right to change the pitch.',
     hold: 6000,
   },
   {
-    emoji: '✋',
+    label: 'TONE',
     text: 'Now raise your right hand. Move it up and down to shape the volume and tone.',
     hold: 6000,
   },
   {
-    emoji: '🎵',
+    label: 'KEY',
     text: 'Want to sound in tune? Hit "Match the music" and play a song near your mic.',
     hold: 7000,
   },
@@ -40,7 +40,7 @@ const STEPS: CoachStep[] = [
 
 export class FirstJamCoach {
   private el: HTMLDivElement;
-  private emojiEl: HTMLSpanElement;
+  private labelEl: HTMLSpanElement;
   private textEl: HTMLSpanElement;
   private nextBtn: HTMLButtonElement;
   private dotsEl: HTMLDivElement;
@@ -60,9 +60,9 @@ export class FirstJamCoach {
     this.el.setAttribute('role', 'status');
     this.el.setAttribute('aria-live', 'polite');
 
-    this.emojiEl = document.createElement('span');
-    this.emojiEl.className = 'fjc-emoji';
-    this.emojiEl.setAttribute('aria-hidden', 'true');
+    this.labelEl = document.createElement('span');
+    this.labelEl.className = 'fjc-label';
+    this.labelEl.setAttribute('aria-hidden', 'true');
 
     this.textEl = document.createElement('span');
     this.textEl.className = 'fjc-text';
@@ -91,7 +91,7 @@ export class FirstJamCoach {
 
     const content = document.createElement('div');
     content.className = 'fjc-content';
-    content.appendChild(this.emojiEl);
+    content.appendChild(this.labelEl);
     content.appendChild(this.textEl);
 
     const controls = document.createElement('div');
@@ -111,7 +111,7 @@ export class FirstJamCoach {
 
   private render(): void {
     const step = STEPS[this.index];
-    this.emojiEl.textContent = step.emoji;
+    this.labelEl.textContent = step.label;
     this.textEl.textContent = step.text;
     this.nextBtn.textContent = this.index === STEPS.length - 1 ? 'Got it' : 'Next';
     const dots = this.dotsEl.querySelectorAll('.fjc-dot');
