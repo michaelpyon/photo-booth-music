@@ -52,4 +52,7 @@ block audio, camera, mode, or recording behavior.
 
 ## Public verification
 
-Pending deployment of the committed gate record.
+Deployment `dpl_B1VzMyryixzVPsC9iDVAGH8YxrXg` is READY with both existing aliases
+attached. The public HTML, CSS, JavaScript, Open Graph image, and favicon match the
+local production files byte for byte. The stable Vercel URL then passed the full
+14-assertion camera-to-clip matrix with 0 console or page errors.
