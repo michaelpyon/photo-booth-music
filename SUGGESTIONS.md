@@ -112,24 +112,22 @@ previews already resolve. No URL change made.
    shift that makes real melodies playable, which is what turns a 5 second clip into a
    30 second one. Deploy needed to see live.
 
-### Quick wins (not yet done)
+### Quick wins
 
-2. Audio "first note" warmth check. Confirm the default theremin patch does not start
-   harsh or clip on the very first gesture, since the persona judges audio quality in
-   the first 2 seconds. If needed, soften the default filter or attack in
-   `src/audio/ThereminSynth.ts`. Effort S to M. Deploy needed to verify by ear.
+2. [x] Audio "first note" warmth check (code review, no change needed). Reviewed the full
+   first-note path in `src/audio/ThereminSynth.ts` + `src/audio/AudioEngine.ts`. The
+   default patch is already warm and click-free on the first gesture: pure sine
+   (gainSine 1, gainSaw 0) through a wide-open lowpass (8000 Hz), the output gain ramps
+   from 0 to 0.7 over a 50 ms linear attack so there is no startup pop, and oscillator
+   pitch uses an exponential ramp. Effective peak through the 0.7 master is roughly 0.49
+   for a pure sine, so it does not clip. A pure sine has no harmonics to make the lowpass
+   resonance harsh. No code change made: softening attack or filter would be a
+   speculative, ear-only tweak that I cannot verify without a deploy, and the patch is
+   already correct, so changing it would risk regressing the sound. Confirmed, not
+   assumed.
 
 ### Bigger bets
 
-5. One-tap "share this clip to X or Reddit" from the record flow. The ClipRecorder
-   already produces a 15 second webm with Web Share fallback (`src/recording/`,
-   `src/ui/ClipRecorderUI.ts`). Adding a prefilled share intent with the app URL and a
-   suggested caption would close the loop from "this is cool" to "posted." Effort M.
-   Needs a deploy to verify share targets.
-6. A built-in 10 second guided "first jam" so the empty instrument is never silent.
-   A short scripted overlay that says raise your left hand, now your right, now try
-   Match the music, would convert more first-timers into clippers. Effort M. Build only
-   until polish, deploy to verify feel.
 7. Pin-line plus daily push (the prior pass's explicitly deferred bet). A way to save a
    favorite patch or scale and get a daily nudge to play. This is a multi-week
    notification and persistence feature, out of scope for a contained additive pass.
